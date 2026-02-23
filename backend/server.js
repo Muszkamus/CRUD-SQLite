@@ -2,6 +2,14 @@ const express = require("express");
 const app = express();
 const port = 8080;
 
+const {
+  createTable,
+  insertUser,
+  getUsers,
+  getUser,
+  deleteTable,
+} = require("./db/statements");
+
 const allowedOrigins = ["http://localhost:3000"];
 
 app.use((req, res, next) => {
@@ -21,14 +29,23 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/get", (req, res) => {
+app.get("/addTable", (req, res) => {
+  createTable();
+  res.json({ message: "Table Added" });
+});
+
+app.get("/deleteTable", (req, res) => {
+  deleteTable();
   res.json({ message: "Deleted" });
 });
 app.get("/add", (req, res) => {
   res.json({ message: "Added" });
 });
 
-app.get("/add");
+app.get("/get", (req, res) => {
+  const users = getUsers();
+  res.json(users);
+});
 
 app.listen(port, () => {
   console.log(`Backend listening on port ${port}`);
