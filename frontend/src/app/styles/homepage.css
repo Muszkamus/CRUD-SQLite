@@ -1,12 +1,48 @@
-.main {
+.app {
   display: flex;
-  justify-content: center;
-  flex-direction: column;
+  align-items: flex-start;
 }
 
-.buttons {
-  margin: 10px;
+.cell {
   display: flex;
+  justify-content: center;
+  align-items: center; /* vertically centers text */
+  flex: 1; /* ensures equal width in all cells */
+  padding: 8px;
+  border: 1px solid rgb(255, 255, 255);
+  box-sizing: border-box;
+  background-color: #333;
+}
+
+.addExpenseBox {
+  width: 300px;
+  height: 300px;
+  border-style: solid;
+  border-color: rgb(113, 113, 113);
+  background-color: rgb(62, 62, 62);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(62, 62, 62);
+  margin: 20px 20px 0 20px;
+  width: 600px;
+  height: auto;
+}
+
+.existingExpense {
+  display: flex;
+  justify-content: space-between;
+  width: 600px;
+  margin: 0 20px 0px 20px;
+  background-color: #333;
+}
+
+.expenseSubmitted {
+  color: bisque;
+  display: flex;
+  justify-content: center;
 }
 
 .button {
@@ -33,20 +69,4 @@
 }
 .button:active {
   scale: 0.92;
-}
-
-.inputDiv {
-  margin: 10px;
-}
-
-.input {
-  margin: 10px;
-
-  max-width: 190px;
-  padding: 12px;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 2px 2px 7px 0 rgb(0, 0, 0, 0.2);
-  outline: none;
-  color: dimgray;
 }
