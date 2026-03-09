@@ -13,6 +13,8 @@ type AddExpenseBox = {
   setAmount: React.Dispatch<React.SetStateAction<string>>;
   addExpense: React.MouseEventHandler<HTMLButtonElement>;
   isExpenseAdded: boolean;
+  addTable: React.MouseEventHandler<HTMLButtonElement>;
+  // deleteTable: React.MouseEventHandler<HTMLButtonElement>;
 };
 
 export default function AddExpenseBox({
@@ -28,6 +30,8 @@ export default function AddExpenseBox({
   setAmount,
   addExpense,
   isExpenseAdded,
+  addTable,
+  // deleteTable,
 }: AddExpenseBox) {
   return (
     <div className="addExpenseBox">
@@ -104,6 +108,12 @@ export default function AddExpenseBox({
       </div>
 
       <div>
+        <button className="button" onClick={addTable}>
+          Open
+        </button>
+        {/* <button className="button" onClick={deleteTable}>
+          Close
+        </button> */}
         <button className="button" onClick={addExpense}>
           Add
         </button>

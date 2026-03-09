@@ -2,34 +2,42 @@ const db = require("better-sqlite3")("database.db");
 
 const createTable = () => {
   const sql = `
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS expenses (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      age INTEGER) `;
+      date TEXT NOT NULL,
+      category TEXT NOT NULL,
+      method TEXT NOT NULL,
+      description TEXT,
+      amount INTEGER NOT NULL
+    );
+  `;
   db.prepare(sql).run();
 };
 
 const deleteTable = () => {
+  db.prepare(`DROP TABLE IF EXISTS expenses;`).run();
+};
+
+const insertExpense = (date, category, method, description, amount) => {
   const sql = `
-  DROP TABLE users`;
-  db.prepare(sql).run();
+    INSERT INTO expenses (date, category, method, description, amount)
+    VALUES (?, ?, ?, ?, ?);
+  `;
+  return db.prepare(sql).run(date, category, method, description, amount);
 };
 
-const insertUser = (name, age) => {
-  const sql = `
-    INSERT INTO users (name, age)
-    VALUES (?, ?)`;
-  return db.prepare(sql).run(name, age);
+const deleteExpense = (id) => {
+  return db.prepare(`DELETE FROM expenses WHERE id = ?`).run(id);
 };
 
-const getUsers = () => {
-  const sql = `SELECT * FROM users`;
-  return db.prepare(sql).all();
+const getExpenses = () => {
+  return db.prepare(`SELECT * FROM expenses`).all();
 };
 
-const getUser = (id) => {
-  const sql = `SELECT * FROM users WHERE id = ?`;
-  return db.prepare(sql).get(id);
+module.exports = {
+  createTable,
+  deleteTable,
+  insertExpense,
+  deleteExpense,
+  getExpenses,
 };
-
-module.exports = { createTable, deleteTable, insertUser, getUsers, getUser };

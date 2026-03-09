@@ -1,98 +1,125 @@
 "use client";
 
 import "../styles/homepage.css";
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import AddExpenseBox from "./AddExpenseBox";
-import Totals from "./Totals";
 import ExpenseHistoryLog from "./ExpenseHistoryLog";
 import Row from "./Row";
+import { addData, addTable, dataURL, deleteData } from "../functions/jobs";
 
-const expenseHistory: any = [];
+type Expense = {
+  id: number;
+  date: string;
+  category: string;
+  method: string;
+  description: string;
+  amount: number;
+};
 
-function useLocalStorageState(initialState: any, key: string) {
-  const [value, setValue] = useState(() => {
-    if (typeof window === "undefined") return initialState;
-
-    const stored = window.localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : initialState;
-  });
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem(key, JSON.stringify(value));
-  }, [value, key]);
-
-  return [value, setValue];
-}
+type NewExpense = {
+  date: string;
+  category: string;
+  method: string;
+  description: string;
+  amount: number;
+};
 
 export default function HomePage() {
-  const [date, setDate] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const [method, setMethod] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
-  const [expenses, setExpenses] = useLocalStorageState([], expenseHistory);
-  const [isExpenseAdded, setIsExpenseAdded] = useState<boolean>(false);
-  const [selectedExpense, setSelectedExpense] = useState<String>("");
-  const individualAmounts = expenses.map((e: any) => e.amount);
-  const totalAmountSpent = individualAmounts.reduce(
-    (acc: number, val: number) => acc + val,
-    0,
-  );
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [date, setDate] = useState("");
+  const [category, setCategory] = useState("");
+  const [method, setMethod] = useState("");
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [isExpenseAdded, setIsExpenseAdded] = useState(false);
 
-  function addExpense(e: any) {
-    const parsedAmount = parseFloat(amount);
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  async function fetchExpenses() {
+    try {
+      const response = await fetch(`${dataURL}/retrieveTable`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+      }
+
+      const data = await response.json();
+      setExpenses(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    fetchExpenses();
+  }, []);
+
+  async function addExpense(e: any) {
     e.preventDefault();
 
+    const parsedAmount = Number(amount);
+
+    // Required fields: date/category/method + valid positive amount
     if (
       !date ||
       !category ||
       !method ||
-      !amount ||
-      isNaN(parsedAmount) ||
-      parsedAmount < 0
+      !Number.isFinite(parsedAmount) ||
+      parsedAmount <= 0
     ) {
       console.log("Please fill the mandatory boxes");
       return;
     }
-    const uniqueID = new Date().getTime();
-    const newExpense = {
-      id: uniqueID,
+
+    const newExpense: NewExpense = {
       date,
       category,
       method,
-      description,
+      description, // optional in UX; fine to store empty string
       amount: parsedAmount,
     };
 
-    if (!date || !category || !method || !amount) {
-      return;
-    } else {
+    try {
+      addData(newExpense);
+      setTimeout(() => {
+        fetchExpenses();
+      }, 300);
+
       setIsExpenseAdded(true);
-      setExpenses([...expenses, newExpense]);
       setDate("");
       setCategory("");
       setMethod("");
       setDescription("");
       setAmount("");
-      setTimeout(() => {
+
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+      timeoutRef.current = window.setTimeout(() => {
         setIsExpenseAdded(false);
       }, 3000);
+    } catch (err) {
+      console.error("Failed to add expense:", err);
+      // optionally show UI error state here
     }
   }
 
   return (
     <div className="app">
       <div className="expenseColumn">
-        <Totals totalAmountSpent={totalAmountSpent} />
         <Row />
         <ExpenseHistoryLog
+          deleteData={deleteData}
           expenses={expenses}
           setExpenses={setExpenses}
-          selectedExpense={selectedExpense}
-          setSelectedExpense={setSelectedExpense}
         />
       </div>
+
+      <button onClick={fetchExpenses}>REFRESH</button>
 
       <AddExpenseBox
         date={date}
@@ -107,6 +134,7 @@ export default function HomePage() {
         setAmount={setAmount}
         addExpense={addExpense}
         isExpenseAdded={isExpenseAdded}
+        addTable={addTable}
       />
     </div>
   );

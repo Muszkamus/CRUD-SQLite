@@ -1,9 +1,20 @@
+type ExpenseHistoryLog = {
+  deleteData: (id: number) => Promise<number>;
+  expenses: any;
+  setExpenses: any;
+};
+
 export default function ExpenseHistoryLog({
+  deleteData,
   expenses,
   setExpenses,
-  selectedExpense,
-}: any) {
-  function handleDelete(id: any) {
+}: ExpenseHistoryLog) {
+  function handleDelete(id: number) {
+    // if deleteData(id) was successfull on the backend >>>
+    deleteData(id);
+
+    // Send responses from backend when successful and based on the response, refetch
+    // Update the UI by refetching
     setExpenses(expenses.filter((e: any) => e.id !== id));
   }
   return (
@@ -26,12 +37,7 @@ export default function ExpenseHistoryLog({
             <p>£{expense.amount}</p>
           </div>
           <div className="cell">
-            <button
-              value={selectedExpense}
-              onClick={() => handleDelete(expense.id)}
-            >
-              ❌
-            </button>
+            <button onClick={() => handleDelete(expense.id)}>❌</button>
           </div>
         </div>
       ))}

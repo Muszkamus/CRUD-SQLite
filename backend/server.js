@@ -2,12 +2,14 @@ const express = require("express");
 const app = express();
 const port = 8080;
 
+app.use(express.json());
+
 const {
   createTable,
-  insertUser,
-  getUsers,
-  getUser,
+  insertExpense,
+  getExpenses,
   deleteTable,
+  deleteExpense,
 } = require("./db/statements");
 
 const allowedOrigins = ["http://localhost:3000"];
@@ -34,17 +36,37 @@ app.get("/addTable", (req, res) => {
   res.json({ message: "Table Added" });
 });
 
-app.get("/deleteTable", (req, res) => {
-  deleteTable();
-  res.json({ message: "Deleted" });
-});
-app.get("/add", (req, res) => {
-  res.json({ message: "Added" });
+app.delete("/deleteData", (req, res) => {
+  const { id } = req.body;
+  console.log(id);
+
+  deleteExpense(id);
 });
 
-app.get("/get", (req, res) => {
-  const users = getUsers();
-  res.json(users);
+app.post("/addData", async (req, res) => {
+  try {
+    const { date, category, method, description, amount } = req.body;
+
+    const result = await insertExpense(
+      date,
+      category,
+      method,
+      description,
+      amount,
+    );
+
+    res.status(201).json({
+      message: "Expense added successfully",
+      result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to add expense" });
+  }
+});
+app.get("/retrieveTable", (req, res) => {
+  const expenses = getExpenses();
+  res.json(expenses);
 });
 
 app.listen(port, () => {
