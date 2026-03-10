@@ -1,22 +1,14 @@
 type ExpenseHistoryLog = {
-  deleteData: (id: number) => Promise<number>;
-  expenses: any;
-  setExpenses: any;
+  handleDelete: (id: number) => Promise<void>;
+  expenses: any[];
+  setExpenses: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 export default function ExpenseHistoryLog({
-  deleteData,
+  handleDelete,
   expenses,
-  setExpenses,
+  // setExpenses,
 }: ExpenseHistoryLog) {
-  function handleDelete(id: number) {
-    // if deleteData(id) was successfull on the backend >>>
-    deleteData(id);
-
-    // Send responses from backend when successful and based on the response, refetch
-    // Update the UI by refetching
-    setExpenses(expenses.filter((e: any) => e.id !== id));
-  }
   return (
     <>
       {expenses.map((expense: any) => (

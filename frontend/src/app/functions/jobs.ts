@@ -20,7 +20,13 @@ type AddDataTypes = {
   description: string;
   amount: number;
 };
-async function addData(data: AddDataTypes): Promise<void> {
+
+type AddDataResponse = {
+  status: number;
+  data: any; // or your real response type
+};
+
+async function addData(data: AddDataTypes): Promise<AddDataResponse> {
   try {
     const response = await fetch(`${dataURL}/addData`, {
       method: "POST",
@@ -30,18 +36,30 @@ async function addData(data: AddDataTypes): Promise<void> {
       body: JSON.stringify(data),
     });
 
+    const status = response.status;
+
     if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
+      throw new Error(`Response status: ${status}`);
     }
-    await response.text();
+
+    const result = await response.json();
+
+    return {
+      status,
+      data: result,
+    };
   } catch (error) {
     console.error(error);
     throw error;
   }
 }
 
-async function deleteData(id: number): Promise<number> {
-  console.log(id);
+type deleteDataResponse = {
+  status: number;
+  data: any; // or your real response type
+};
+
+async function deleteData(id: number): Promise<deleteDataResponse> {
   try {
     const response = await fetch(`${dataURL}/deleteData`, {
       method: "DELETE",
@@ -51,13 +69,18 @@ async function deleteData(id: number): Promise<number> {
       body: JSON.stringify({ id }),
     });
 
+    const status = response.status;
+
     if (!response.ok) {
-      const text = await response.text();
-      throw new Error(`HTTP ${response.status}: ${text}`);
+      throw new Error(`Response status: ${status}`);
     }
 
-    const result: number = await response.json();
-    return result;
+    const result = await response.json();
+
+    return {
+      status,
+      data: result,
+    };
   } catch (error) {
     console.error(error);
     throw error;

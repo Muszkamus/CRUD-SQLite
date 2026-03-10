@@ -86,17 +86,21 @@ export default function HomePage() {
     };
 
     try {
-      addData(newExpense);
-      setTimeout(() => {
-        fetchExpenses();
-      }, 300);
+      const response = await addData(newExpense);
 
-      setIsExpenseAdded(true);
-      setDate("");
-      setCategory("");
-      setMethod("");
-      setDescription("");
-      setAmount("");
+      const status = response.status; // ← available here
+
+      if (status === 201) {
+        fetchExpenses();
+        setIsExpenseAdded(true);
+        setDate("");
+        setCategory("");
+        setMethod("");
+        setDescription("");
+        setAmount("");
+      } else {
+        return;
+      }
 
       if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
       timeoutRef.current = window.setTimeout(() => {
@@ -108,18 +112,32 @@ export default function HomePage() {
     }
   }
 
+  async function handleDelete(id: number) {
+    try {
+      const response = await deleteData(id);
+
+      const status = response.status;
+      console.log("ID Status: ", status);
+
+      if (status === 201) {
+        fetchExpenses();
+      }
+    } catch (error) {
+      console.error("Failed to delete expense:", error);
+    }
+  }
+
   return (
     <div className="app">
       <div className="expenseColumn">
         <Row />
         <ExpenseHistoryLog
-          deleteData={deleteData}
+          handleDelete={handleDelete}
+          //  deleteData={deleteData}
           expenses={expenses}
           setExpenses={setExpenses}
         />
       </div>
-
-      <button onClick={fetchExpenses}>REFRESH</button>
 
       <AddExpenseBox
         date={date}

@@ -36,11 +36,18 @@ app.get("/addTable", (req, res) => {
   res.json({ message: "Table Added" });
 });
 
-app.delete("/deleteData", (req, res) => {
-  const { id } = req.body;
-  console.log(id);
+app.delete("/deleteData", async (req, res) => {
+  try {
+    const { id } = req.body;
+    deleteExpense(id);
 
-  deleteExpense(id);
+    res.status(201).json({
+      message: "Expense deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete expense" });
+  }
 });
 
 app.post("/addData", async (req, res) => {
