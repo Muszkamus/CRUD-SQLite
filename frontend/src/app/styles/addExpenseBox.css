@@ -1,0 +1,39 @@
+.addExpenseBox {
+  width: 300px;
+  height: 300px;
+  border-style: solid;
+  border-color: rgb(113, 113, 113);
+  background-color: rgb(62, 62, 62);
+}
+
+.button {
+  color: rgb(255, 255, 255);
+  background-color: #2a2a2a;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  line-height: 2rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  cursor: pointer;
+
+  margin-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  border: none;
+}
+
+.button:hover {
+  background-color: #333;
+}
+.button:active {
+  scale: 0.92;
+}
+
+.expenseSubmitted {
+  color: bisque;
+  display: flex;
+  justify-content: center;
+}

@@ -1,21 +1,7 @@
-import { categoryData, methodData } from "../data/data";
+import "../styles/addExpenseBox.css";
 
-type AddExpenseBox = {
-  date: string;
-  setDate: React.Dispatch<React.SetStateAction<string>>;
-  category: string;
-  setCategory: React.Dispatch<React.SetStateAction<string>>;
-  method: string;
-  setMethod: React.Dispatch<React.SetStateAction<string>>;
-  description: string;
-  setDescription: React.Dispatch<React.SetStateAction<string>>;
-  amount: string;
-  setAmount: React.Dispatch<React.SetStateAction<string>>;
-  addExpense: React.MouseEventHandler<HTMLButtonElement>;
-  isExpenseAdded: boolean;
-  addTable: React.MouseEventHandler<HTMLButtonElement>;
-  // deleteTable: React.MouseEventHandler<HTMLButtonElement>;
-};
+import { categoryData, methodData } from "../data/data";
+import { AddExpenseBoxType } from "./ExpenseBoxTypes";
 
 export default function AddExpenseBox({
   date,
@@ -32,7 +18,7 @@ export default function AddExpenseBox({
   isExpenseAdded,
   addTable,
   // deleteTable,
-}: AddExpenseBox) {
+}: AddExpenseBoxType) {
   return (
     <div className="addExpenseBox">
       <div>
@@ -98,7 +84,6 @@ export default function AddExpenseBox({
             placeholder="0.00"
             value={amount}
             onChange={(e) => {
-              // Fix the issue with convertin it into a number
               const value = e.target.value;
               // Allow only numbers and max 2 decimal points
               if (/^\d*(\.\d{0,2})?$/.test(value)) setAmount(value);

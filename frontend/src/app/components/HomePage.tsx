@@ -1,31 +1,25 @@
 "use client";
 
+import { useReducer } from "react";
+
 import "../styles/homepage.css";
 import { useEffect, useRef, useState } from "react";
 import AddExpenseBox from "./AddExpenseBox";
 import ExpenseHistoryLog from "./ExpenseHistoryLog";
 import Row from "./Row";
 import { addData, addTable, dataURL, deleteData } from "../functions/jobs";
+import { Expense, NewExpense } from "../functions/expensesTypes";
+// import Header from "./Header";
 
-type Expense = {
-  id: number;
-  date: string;
-  category: string;
-  method: string;
-  description: string;
-  amount: number;
-};
-
-type NewExpense = {
-  date: string;
-  category: string;
-  method: string;
-  description: string;
-  amount: number;
-};
+import { initialState, reducer } from "../reducer/expensesReducer";
+import { State } from "../reducer/expensesReducerTypes";
 
 export default function HomePage() {
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // old state
+
+  const [expenses, setExpenses] = useState<State[]>([]);
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
   const [method, setMethod] = useState("");
@@ -128,32 +122,34 @@ export default function HomePage() {
   }
 
   return (
-    <div className="app">
-      <div className="expenseColumn">
-        <Row />
-        <ExpenseHistoryLog
-          handleDelete={handleDelete}
-          //  deleteData={deleteData}
-          expenses={expenses}
-          setExpenses={setExpenses}
+    <div>
+      {/* <Header /> */}
+      <div className="app">
+        <div className="expenseColumn">
+          <Row />
+          <ExpenseHistoryLog
+            handleDelete={handleDelete}
+            expenses={expenses}
+            setExpenses={setExpenses}
+          />
+        </div>
+
+        <AddExpenseBox
+          date={date}
+          setDate={setDate}
+          category={category}
+          setCategory={setCategory}
+          method={method}
+          setMethod={setMethod}
+          description={description}
+          setDescription={setDescription}
+          amount={amount}
+          setAmount={setAmount}
+          addExpense={addExpense}
+          isExpenseAdded={isExpenseAdded}
+          addTable={addTable}
         />
       </div>
-
-      <AddExpenseBox
-        date={date}
-        setDate={setDate}
-        category={category}
-        setCategory={setCategory}
-        method={method}
-        setMethod={setMethod}
-        description={description}
-        setDescription={setDescription}
-        amount={amount}
-        setAmount={setAmount}
-        addExpense={addExpense}
-        isExpenseAdded={isExpenseAdded}
-        addTable={addTable}
-      />
     </div>
   );
 }

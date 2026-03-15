@@ -1,3 +1,5 @@
+import "../styles/expenseRow.css";
+
 export default function Row() {
   return (
     <div className="row">
@@ -16,6 +18,10 @@ export default function Row() {
       <div className="cell">
         <p>Amount</p>
       </div>
+      <div className="cell">
+        <p>Edit</p>
+      </div>
+
       <div className="cell">
         <p>Remove</p>
       </div>

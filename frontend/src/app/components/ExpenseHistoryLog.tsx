@@ -7,7 +7,6 @@ type ExpenseHistoryLog = {
 export default function ExpenseHistoryLog({
   handleDelete,
   expenses,
-  // setExpenses,
 }: ExpenseHistoryLog) {
   return (
     <>
@@ -27,6 +26,10 @@ export default function ExpenseHistoryLog({
           </div>
           <div className="cell">
             <p>£{expense.amount}</p>
+          </div>
+
+          <div className="cell">
+            <button onClick={() => console.log("Edited")}>✏️</button>
           </div>
           <div className="cell">
             <button onClick={() => handleDelete(expense.id)}>❌</button>

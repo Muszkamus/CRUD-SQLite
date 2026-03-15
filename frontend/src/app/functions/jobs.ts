@@ -1,5 +1,7 @@
 export const dataURL = "http://localhost:8080";
 
+import { AddDataResponse, AddDataTypes, deleteDataResponse } from "./jobsTypes";
+
 async function retrieveData() {
   try {
     const response = await fetch(`${dataURL}/retrieveTable`);
@@ -12,19 +14,6 @@ async function retrieveData() {
     console.error(error);
   }
 }
-
-type AddDataTypes = {
-  date: string;
-  category: string;
-  method: string;
-  description: string;
-  amount: number;
-};
-
-type AddDataResponse = {
-  status: number;
-  data: any; // or your real response type
-};
 
 async function addData(data: AddDataTypes): Promise<AddDataResponse> {
   try {
@@ -53,11 +42,6 @@ async function addData(data: AddDataTypes): Promise<AddDataResponse> {
     throw error;
   }
 }
-
-type deleteDataResponse = {
-  status: number;
-  data: any; // or your real response type
-};
 
 async function deleteData(id: number): Promise<deleteDataResponse> {
   try {
