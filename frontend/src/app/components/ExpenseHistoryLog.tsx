@@ -1,12 +1,19 @@
+import { Expense } from "../functions/expensesTypes";
+import { Action } from "../reducer/expensesReducerTypes";
+
 type ExpenseHistoryLog = {
-  handleDelete: (id: number) => Promise<void>;
-  expenses: any[];
-  setExpenses: React.Dispatch<React.SetStateAction<any[]>>;
+  handleDelete: any;
+  // dispatch: React.Dispatch<Action>) => Promise<void>
+
+  expenses: Expense[];
+  // dispatch: React.Dispatch<Action>;
+  //setExpenses: React.Dispatch<React.SetStateAction<any[]>>;
 };
 
 export default function ExpenseHistoryLog({
   handleDelete,
   expenses,
+  // dispatch,
 }: ExpenseHistoryLog) {
   return (
     <>
@@ -32,7 +39,16 @@ export default function ExpenseHistoryLog({
             <button onClick={() => console.log("Edited")}>✏️</button>
           </div>
           <div className="cell">
-            <button onClick={() => handleDelete(expense.id)}>❌</button>
+            <button
+              onClick={() =>
+                handleDelete(
+                  expense.id,
+                  // dispatch
+                )
+              }
+            >
+              ❌
+            </button>
           </div>
         </div>
       ))}

@@ -17,6 +17,7 @@ export default function AddExpenseBox({
   addExpense,
   isExpenseAdded,
   addTable,
+  // isDisabled,
   // deleteTable,
 }: AddExpenseBoxType) {
   return (
@@ -99,7 +100,11 @@ export default function AddExpenseBox({
         {/* <button className="button" onClick={deleteTable}>
           Close
         </button> */}
-        <button className="button" onClick={addExpense}>
+        <button
+          // disabled={isDisabled}
+          className="button"
+          onClick={addExpense}
+        >
           Add
         </button>
       </div>

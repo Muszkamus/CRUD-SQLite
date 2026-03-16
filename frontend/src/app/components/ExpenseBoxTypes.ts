@@ -12,5 +12,6 @@ export type AddExpenseBoxType = {
   addExpense: React.MouseEventHandler<HTMLButtonElement>;
   isExpenseAdded: boolean;
   addTable: React.MouseEventHandler<HTMLButtonElement>;
+  // isDisabled: boolean;
   // deleteTable: React.MouseEventHandler<HTMLButtonElement>;
 };

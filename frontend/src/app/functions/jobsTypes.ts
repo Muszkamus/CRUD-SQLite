@@ -3,7 +3,7 @@ export type AddDataTypes = {
   category: string;
   method: string;
   description: string;
-  amount: number;
+  amount: string;
 };
 
 export type AddDataResponse = {

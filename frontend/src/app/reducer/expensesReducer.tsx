@@ -1,32 +1,38 @@
-import { Action, State, Expense } from "./expensesReducerTypes";
+// This reducer is stricly used to fetch, edit or delete retrieved expenses
 
-const initialState: State = {
-  expenses: [],
-  date: "",
-  category: "",
-  method: "",
-  description: "",
-  amount: "",
-  isExpenseAdded: false,
+type Expense = {
+  id: number;
+  date: string;
+  category: string;
+  method: string;
+  description: string;
+  amount: number;
 };
 
-function reducer(state: State, action: Action) {
+// Fetched expenses
+type ExpensesState = {
+  expenses: Expense[];
+};
+
+const expensesInitialState: ExpensesState = {
+  expenses: [],
+};
+
+export type ExpensesAction = {
+  type: "FETCHED_EXPENSES_SUCCESS";
+  payload: { expenses: Expense[] };
+};
+
+function expensesReducer(
+  state: ExpensesState,
+  action: ExpensesAction,
+): ExpensesState {
   switch (action.type) {
-    case "RESET":
-      return initialState;
-
-    // AddExpense
-    // DeleteExpense
-    // RetrieveExpenses
-    // UpdateExpenses
-    // CreateTable
-    // DeleteTable
-    // Error
-
+    case "FETCHED_EXPENSES_SUCCESS":
+      return { ...state, expenses: action.payload.expenses };
     default:
-      const _exhaustive = action;
       return state;
   }
 }
 
-export { reducer, initialState };
+export { expensesReducer, expensesInitialState };

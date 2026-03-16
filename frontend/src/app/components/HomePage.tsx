@@ -1,32 +1,54 @@
 "use client";
 
-import { useReducer } from "react";
-
+// --- Styles ---
 import "../styles/homepage.css";
-import { useEffect, useRef, useState } from "react";
+
+// --- React Hooks ---
+import { useEffect, useRef, useState, useReducer } from "react";
+
+// --- Components ----
 import AddExpenseBox from "./AddExpenseBox";
 import ExpenseHistoryLog from "./ExpenseHistoryLog";
 import Row from "./Row";
-import { addData, addTable, dataURL, deleteData } from "../functions/jobs";
-import { Expense, NewExpense } from "../functions/expensesTypes";
 // import Header from "./Header";
 
-import { initialState, reducer } from "../reducer/expensesReducer";
-import { State } from "../reducer/expensesReducerTypes";
+// --- Functions ---
+import { addData, addTable, dataURL, deleteData } from "../functions/jobs";
+import { NewExpense } from "../functions/expensesTypes";
+import { handleDelete } from "../functions/deleteData";
+
+// --- Fetch Expenses ---
+import { fetchExpenses } from "../functions/fetchExpenses";
+import {
+  expensesInitialState,
+  expensesReducer,
+} from "../reducer/expensesReducer";
+import {
+  submitExpensesReducer,
+  submitInitialState,
+} from "../reducer/expenseFormReducer";
 
 export default function HomePage() {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  // Fetched Expenses Reducer
+  const [stateFetchedExpenses, dispatchFetchedExpenses] = useReducer(
+    expensesReducer,
+    expensesInitialState,
+  );
 
-  // old state
+  // Submit Expenses Reducer
 
-  const [expenses, setExpenses] = useState<State[]>([]);
+  const [stateSubmitExpenses, dispatchSubmitExpenses] = useReducer(
+    submitExpensesReducer,
+    submitInitialState,
+  );
+
+  // Local UI Form States
   const [date, setDate] = useState("");
   const [category, setCategory] = useState("");
   const [method, setMethod] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [isExpenseAdded, setIsExpenseAdded] = useState(false);
-
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -35,23 +57,8 @@ export default function HomePage() {
     };
   }, []);
 
-  async function fetchExpenses() {
-    try {
-      const response = await fetch(`${dataURL}/retrieveTable`);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error ${response.status}`);
-      }
-
-      const data = await response.json();
-      setExpenses(data);
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   useEffect(() => {
-    fetchExpenses();
+    fetchExpenses(dispatchFetchedExpenses);
   }, []);
 
   async function addExpense(e: any) {
@@ -59,33 +66,35 @@ export default function HomePage() {
 
     const parsedAmount = Number(amount);
 
-    // Required fields: date/category/method + valid positive amount
     if (
       !date ||
       !category ||
       !method ||
       !Number.isFinite(parsedAmount) ||
-      parsedAmount <= 0
+      parsedAmount <= 0 // Cannot be negative
     ) {
-      console.log("Please fill the mandatory boxes");
       return;
     }
 
-    const newExpense: NewExpense = {
-      date,
-      category,
-      method,
-      description, // optional in UX; fine to store empty string
-      amount: parsedAmount,
-    };
-
     try {
-      const response = await addData(newExpense);
+      dispatchSubmitExpenses({
+        type: "ADD_EXPENSES_SUBMIT",
+        payload: {
+          date: date,
+          category: category,
+          method: method,
+          description: description,
+          amount: amount,
+        },
+      });
 
-      const status = response.status; // ← available here
+      const response = await addData(stateSubmitExpenses);
+      // dispatchSubmitExpenses({ type: "ADD_EXPENSES_PENDING" });
 
+      const status = response.status;
       if (status === 201) {
-        fetchExpenses();
+        dispatchSubmitExpenses({ type: "ADD_EXPENSES_SUCCESS" });
+        fetchExpenses(dispatchFetchedExpenses);
         setIsExpenseAdded(true);
         setDate("");
         setCategory("");
@@ -95,29 +104,12 @@ export default function HomePage() {
       } else {
         return;
       }
-
-      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
-      timeoutRef.current = window.setTimeout(() => {
-        setIsExpenseAdded(false);
-      }, 3000);
     } catch (err) {
-      console.error("Failed to add expense:", err);
-      // optionally show UI error state here
-    }
-  }
-
-  async function handleDelete(id: number) {
-    try {
-      const response = await deleteData(id);
-
-      const status = response.status;
-      console.log("ID Status: ", status);
-
-      if (status === 201) {
-        fetchExpenses();
-      }
-    } catch (error) {
-      console.error("Failed to delete expense:", error);
+      console.error("Failed to add Expenses");
+      dispatchSubmitExpenses({
+        type: "ADD_EXPENSES_ERROR",
+        payload: { error: err },
+      });
     }
   }
 
@@ -129,8 +121,8 @@ export default function HomePage() {
           <Row />
           <ExpenseHistoryLog
             handleDelete={handleDelete}
-            expenses={expenses}
-            setExpenses={setExpenses}
+            expenses={stateFetchedExpenses.expenses}
+            //dispatch={dispatch}
           />
         </div>
 
