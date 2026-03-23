@@ -1,8 +1,9 @@
-import { ExpensesAction } from "../reducer/expensesReducer";
+import { ExpensesAction } from "../reducer/fetchedExpensesReducer";
 import { dataURL } from "./jobs";
 
 export async function fetchExpenses(dispatch: React.Dispatch<ExpensesAction>) {
   try {
+    dispatch({ type: "FETCHED_EXPENSES_PENDING" });
     const response = await fetch(`${dataURL}/retrieveTable`);
 
     if (!response.ok) {
@@ -16,6 +17,6 @@ export async function fetchExpenses(dispatch: React.Dispatch<ExpensesAction>) {
       payload: { expenses: data },
     });
   } catch (err) {
-    console.error(err);
+    dispatch({ type: "FETCHED_EXPENSES_ERROR", payload: { error: err } });
   }
 }

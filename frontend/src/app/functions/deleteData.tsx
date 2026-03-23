@@ -1,21 +1,16 @@
 import { deleteData } from "./jobs";
 import { fetchExpenses } from "./fetchExpenses";
-import { Action } from "../reducer/expensesReducerTypes";
-
-type handleDelete = (
-  id: number,
-  dispatch: React.Dispatch<Action>,
-) => Promise<void>;
+import { ExpensesAction } from "../reducer/fetchedExpensesReducer";
 
 export async function handleDelete(
   id: number,
-  dispatch: React.Dispatch<Action>,
-) {
+  dispatchFetchedExpenses: React.Dispatch<ExpensesAction>,
+): Promise<void> {
   try {
     const response = await deleteData(id);
 
     if (response.status === 201) {
-      fetchExpenses(dispatch);
+      fetchExpenses(dispatchFetchedExpenses);
     }
   } catch (error) {
     console.error("Failed to delete expense:", error);

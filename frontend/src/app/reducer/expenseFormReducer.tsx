@@ -1,52 +1,48 @@
-// this reducer is strictly to be used when submitting new expense to the database
+// This reducer is strictly to be used to submit new expense to the database
 
-import { Action, State } from "./expensesReducerTypes";
+import { SubmitAction, SubmitExpenseType } from "./expenseFormReducerTypes";
 
-const submitInitialState: State = {
+const submitInitialState: SubmitExpenseType = {
   date: "",
   category: "",
   method: "",
   description: "",
-  amount: "",
+  amount: 0,
   isExpenseAdded: false,
-  uiMessage: "",
+  status: "idle",
   error: "",
+  isButtonDisabled: false,
 };
 
-function submitExpensesReducer(state: State, action: Action): State {
+function submitExpensesReducer(
+  state: SubmitExpenseType,
+  action: SubmitAction,
+): SubmitExpenseType {
   switch (action.type) {
     case "RESET":
       return submitInitialState;
     case "ADD_EXPENSES_SUBMIT":
       return {
         ...state,
-        date: action.payload.date,
-        category: action.payload.category,
-        method: action.payload.method,
-        description: action.payload.description,
-        amount: action.payload.amount,
         isExpenseAdded: true,
-        uiMessage: "Submitted",
+        isButtonDisabled: true,
+        status: "pending",
       };
-    case "ADD_EXPENSES_PENDING":
-      return {
-        ...state,
-        isExpenseAdded: true,
-        uiMessage: "Please wait",
-      };
-
     case "ADD_EXPENSES_SUCCESS":
       return {
         ...state,
         isExpenseAdded: true,
-        uiMessage: "Please wait",
+        isButtonDisabled: false,
+        status: "success",
       };
 
     case "ADD_EXPENSES_ERROR":
       return {
         ...state,
         isExpenseAdded: false,
-        uiMessage: "Something went wrong",
+        error: action.payload.error,
+        isButtonDisabled: false,
+        status: "error",
       };
 
     default:

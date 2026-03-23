@@ -1,23 +1,16 @@
-export type Expense = {
-  id: number;
+export type SubmitExpenseType = {
   date: string;
   category: string;
   method: string;
   description: string;
   amount: number;
-};
-export type State = {
-  date: string;
-  category: string;
-  method: string;
-  description: string;
-  amount: string;
   isExpenseAdded: boolean;
-  uiMessage: string;
+  status: "pending" | "idle" | "error" | "success";
   error: string;
+  isButtonDisabled: boolean;
 };
 
-export type Action =
+export type SubmitAction =
   | { type: "RESET" }
   | {
       type: "ADD_EXPENSES_SUBMIT";
@@ -26,11 +19,8 @@ export type Action =
         category: string;
         method: string;
         description: string;
-        amount: string;
+        amount: number;
       };
-    }
-  | {
-      type: "ADD_EXPENSES_PENDING";
     }
   | {
       type: "ADD_EXPENSES_SUCCESS";

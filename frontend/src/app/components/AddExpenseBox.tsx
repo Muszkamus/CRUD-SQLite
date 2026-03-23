@@ -1,9 +1,10 @@
 import "../styles/addExpenseBox.css";
 
 import { categoryData, methodData } from "../data/data";
-import { AddExpenseBoxType } from "./ExpenseBoxTypes";
+import { AddExpenseBoxProps } from "./ExpenseBoxTypes";
 
 export default function AddExpenseBox({
+  state,
   date,
   setDate,
   category,
@@ -15,11 +16,8 @@ export default function AddExpenseBox({
   amount,
   setAmount,
   addExpense,
-  isExpenseAdded,
   addTable,
-  // isDisabled,
-  // deleteTable,
-}: AddExpenseBoxType) {
+}: AddExpenseBoxProps) {
   return (
     <div className="addExpenseBox">
       <div>
@@ -101,7 +99,7 @@ export default function AddExpenseBox({
           Close
         </button> */}
         <button
-          // disabled={isDisabled}
+          disabled={state.isButtonDisabled}
           className="button"
           onClick={addExpense}
         >
@@ -110,7 +108,7 @@ export default function AddExpenseBox({
       </div>
 
       <div className="expenseSubmitted">
-        <p>{isExpenseAdded ? "Expense Submitted!" : ""}</p>
+        <p>{state.isExpenseAdded ? "Expense Submitted!" : ""}</p>
       </div>
     </div>
   );

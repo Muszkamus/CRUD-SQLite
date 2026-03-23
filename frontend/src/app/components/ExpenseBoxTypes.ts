@@ -1,4 +1,7 @@
-export type AddExpenseBoxType = {
+import { SubmitExpenseType } from "../reducer/expenseFormReducerTypes";
+
+export type AddExpenseBoxProps = {
+  state: SubmitExpenseType;
   date: string;
   setDate: React.Dispatch<React.SetStateAction<string>>;
   category: string;
@@ -10,8 +13,7 @@ export type AddExpenseBoxType = {
   amount: string;
   setAmount: React.Dispatch<React.SetStateAction<string>>;
   addExpense: React.MouseEventHandler<HTMLButtonElement>;
-  isExpenseAdded: boolean;
+
   addTable: React.MouseEventHandler<HTMLButtonElement>;
-  // isDisabled: boolean;
   // deleteTable: React.MouseEventHandler<HTMLButtonElement>;
 };

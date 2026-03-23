@@ -2,8 +2,8 @@ export type AddDataTypes = {
   date: string;
   category: string;
   method: string;
-  description: string;
-  amount: string;
+  // description: string;
+  amount: number;
 };
 
 export type AddDataResponse = {

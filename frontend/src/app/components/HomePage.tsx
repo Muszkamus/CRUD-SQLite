@@ -10,19 +10,21 @@ import { useEffect, useRef, useState, useReducer } from "react";
 import AddExpenseBox from "./AddExpenseBox";
 import ExpenseHistoryLog from "./ExpenseHistoryLog";
 import Row from "./Row";
-// import Header from "./Header";
+import Header from "./Header/Header";
+import FetchedExpenses from "./FetchedExpenses";
 
 // --- Functions ---
-import { addData, addTable, dataURL, deleteData } from "../functions/jobs";
-import { NewExpense } from "../functions/expensesTypes";
+import { addData, addTable } from "../functions/jobs";
 import { handleDelete } from "../functions/deleteData";
 
-// --- Fetch Expenses ---
+// --- Fetch Expenses Reducer ---
 import { fetchExpenses } from "../functions/fetchExpenses";
 import {
   expensesInitialState,
   expensesReducer,
-} from "../reducer/expensesReducer";
+} from "../reducer/fetchedExpensesReducer";
+
+// --- Add Expenses Reducer ---
 import {
   submitExpensesReducer,
   submitInitialState,
@@ -36,7 +38,6 @@ export default function HomePage() {
   );
 
   // Submit Expenses Reducer
-
   const [stateSubmitExpenses, dispatchSubmitExpenses] = useReducer(
     submitExpensesReducer,
     submitInitialState,
@@ -48,7 +49,6 @@ export default function HomePage() {
   const [method, setMethod] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
-  const [isExpenseAdded, setIsExpenseAdded] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -76,36 +76,41 @@ export default function HomePage() {
       return;
     }
 
+    const submitExpensePayload = {
+      date,
+      category,
+      method,
+      description,
+      amount: parsedAmount,
+    };
+
     try {
       dispatchSubmitExpenses({
         type: "ADD_EXPENSES_SUBMIT",
-        payload: {
-          date: date,
-          category: category,
-          method: method,
-          description: description,
-          amount: amount,
-        },
+        payload: submitExpensePayload,
       });
 
-      const response = await addData(stateSubmitExpenses);
+      const response = await addData(submitExpensePayload);
       // dispatchSubmitExpenses({ type: "ADD_EXPENSES_PENDING" });
 
       const status = response.status;
+
       if (status === 201) {
-        dispatchSubmitExpenses({ type: "ADD_EXPENSES_SUCCESS" });
         fetchExpenses(dispatchFetchedExpenses);
-        setIsExpenseAdded(true);
+        dispatchSubmitExpenses({ type: "ADD_EXPENSES_SUCCESS" });
         setDate("");
         setCategory("");
         setMethod("");
         setDescription("");
         setAmount("");
+
+        setTimeout(() => {
+          dispatchSubmitExpenses({ type: "RESET" });
+        }, 2000);
       } else {
         return;
       }
     } catch (err) {
-      console.error("Failed to add Expenses");
       dispatchSubmitExpenses({
         type: "ADD_EXPENSES_ERROR",
         payload: { error: err },
@@ -115,15 +120,17 @@ export default function HomePage() {
 
   return (
     <div>
-      {/* <Header /> */}
+      <Header />
       <div className="app">
-        <div className="expenseColumn">
+        <div>
           <Row />
-          <ExpenseHistoryLog
-            handleDelete={handleDelete}
-            expenses={stateFetchedExpenses.expenses}
-            //dispatch={dispatch}
-          />
+          <ExpenseHistoryLog stateFetchedExpenses={stateFetchedExpenses}>
+            <FetchedExpenses
+              stateFetchedExpenses={stateFetchedExpenses}
+              handleDelete={handleDelete}
+              dispatchFetchedExpenses={dispatchFetchedExpenses}
+            />
+          </ExpenseHistoryLog>
         </div>
 
         <AddExpenseBox
@@ -138,10 +145,11 @@ export default function HomePage() {
           amount={amount}
           setAmount={setAmount}
           addExpense={addExpense}
-          isExpenseAdded={isExpenseAdded}
           addTable={addTable}
+          state={stateSubmitExpenses}
         />
       </div>
+      {/* <p>UI Message : {stateSubmitExpenses.uiMessage}</p> */}
     </div>
   );
 }

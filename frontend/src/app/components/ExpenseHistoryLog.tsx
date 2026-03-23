@@ -1,57 +1,35 @@
-import { Expense } from "../functions/expensesTypes";
-import { Action } from "../reducer/expensesReducerTypes";
+import { FetchedExpensesState } from "../reducer/fetchedExpensesReducer";
+import Spinner from "./Spinner";
 
-type ExpenseHistoryLog = {
-  handleDelete: any;
-  // dispatch: React.Dispatch<Action>) => Promise<void>
+import "../styles/expenseRow.css";
 
-  expenses: Expense[];
-  // dispatch: React.Dispatch<Action>;
-  //setExpenses: React.Dispatch<React.SetStateAction<any[]>>;
+type ExpenseHistoryLogProps = {
+  stateFetchedExpenses: FetchedExpensesState;
+  children: React.ReactNode;
 };
 
 export default function ExpenseHistoryLog({
-  handleDelete,
-  expenses,
-  // dispatch,
-}: ExpenseHistoryLog) {
+  stateFetchedExpenses,
+  children,
+}: ExpenseHistoryLogProps) {
   return (
-    <>
-      {expenses.map((expense: any) => (
-        <div className="existingExpense" key={expense.id}>
-          <div className="cell">
-            <p>{expense.date}</p>
-          </div>
-          <div className="cell">
-            <p>{expense.category}</p>
-          </div>
-          <div className="cell">
-            <p>{expense.method}</p>
-          </div>
-          <div className="cell">
-            <p>{expense.description}</p>
-          </div>
-          <div className="cell">
-            <p>£{expense.amount}</p>
-          </div>
+    <div>
+      {stateFetchedExpenses.status === "success" && children}
 
-          <div className="cell">
-            <button onClick={() => console.log("Edited")}>✏️</button>
-          </div>
-          <div className="cell">
-            <button
-              onClick={() =>
-                handleDelete(
-                  expense.id,
-                  // dispatch
-                )
-              }
-            >
-              ❌
-            </button>
-          </div>
-        </div>
-      ))}
-    </>
+      <div className="expensesEdgeCase">
+        {/* {stateFetchedExpenses.status === "success" && <Spinner />} */}
+
+        {stateFetchedExpenses.status === "success" &&
+        stateFetchedExpenses.expenses.length === 0 ? (
+          <p>Empty! No expenses in the log 😊</p>
+        ) : (
+          ""
+        )}
+        {stateFetchedExpenses.status === "loading" && <Spinner />}
+        {stateFetchedExpenses.status === "error" && (
+          <p>Error fetching expenses</p>
+        )}
+      </div>
+    </div>
   );
 }
